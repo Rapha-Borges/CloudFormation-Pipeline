@@ -1,0 +1,59 @@
+name: Deploy
+
+on:
+  push:
+    paths:
+      - 'templates/**'
+
+jobs:
+  cloudformation-linter:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Cloud Formation Linter with Latest Version
+        uses: scottbrenner/cfn-lint-action@v2
+
+      - name: Run Linter.
+        run: |
+          cfn-lint --version
+          cfn-lint -t ./templates/* --ignore-checks E3002
+
+  deploy-stack:
+    needs: cloudformation-linter
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy VPC Stack
+        id: deploy-vpc
+        uses: aws-actions/aws-cloudformation-github-deploy@v1
+        with:
+          name: "giro-vpc"
+          template: "./templates/vpc.yaml"
+          no-fail-on-empty-changeset: "1"
+          capabilities: CAPABILITY_IAM
+          timeout-in-minutes: "10"
+          parameter-overrides: "EnvID=giro"
+
+      - name: Deploy EC2 Stack
+        id: deploy-ec2
+        uses: aws-actions/aws-cloudformation-github-deploy@v1
+        with:
+          name: "giro-ec2"
+          template: "./templates/ec2.yaml"
+          no-fail-on-empty-changeset: "1"
+          capabilities: CAPABILITY_IAM
+          timeout-in-minutes: "10"
+          parameter-overrides: "EnvID=giro"
