@@ -25,3 +25,22 @@ This repository uses GitHub Actions to automatically validate CloudFormation tem
 This repository uses parameterized CloudFormation templates to customize the resources that are created. The parameters are defined in the `parameters.json` file. The parameters are passed to the CloudFormation templates during deployment.
 
 ## Secure
+
+AWS credentials and sensitive information are stored securely in GitHub Secrets. 
+
+## Reusable
+
+All the templates are designed to be reusable and modular.
+
+## Examples
+
+![Stacks](./images/stacks.png)
+
+![VPC](./images/vpc.png)
+
+![EC2](./images/ec2.png)
+
+## TODO
+
+- [ ] Add more CloudFormation templates.
+- [ ] Get outputs from nested stacks.
