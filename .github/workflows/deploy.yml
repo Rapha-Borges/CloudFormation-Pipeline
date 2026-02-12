@@ -38,7 +38,7 @@ jobs:
 
       - name: Deploy VPC Stack
         id: deploy-vpc
-        uses: aws-actions/aws-cloudformation-github-deploy@v1
+        uses: aws-actions/aws-cloudformation-github-deploy@v2
         with:
           name: "giro-vpc"
           template: "./templates/vpc.yaml"
@@ -49,7 +49,7 @@ jobs:
 
       - name: Deploy EC2 Stack
         id: deploy-ec2
-        uses: aws-actions/aws-cloudformation-github-deploy@v1
+        uses: aws-actions/aws-cloudformation-github-deploy@v2
         with:
           name: "giro-ec2"
           template: "./templates/ec2.yaml"
